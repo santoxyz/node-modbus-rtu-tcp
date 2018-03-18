@@ -1,6 +1,5 @@
-# node-modbus-rtu [![Build Status](https://travis-ci.org/thekip/node-modbus-rtu.svg?branch=master)](https://travis-ci.org/thekip/node-modbus-rtu)
-Pure NodeJS implementation of ModbusRTU protocol
-using [node-serialport](https://github.com/voodootikigod/node-serialport) and [Bluebird promises](https://github.com/petkaantonov/bluebird)
+# node-modbus-rtu
+This is a fork of [thekip/node-modbus-rtu](https://github.com/thekip/node-modbus-rtu) to handle Modbus RTU like protocol over TCP Sockets
 
 ## Implementation notes
 This library implement ONLY **ModbusRTU Master** and only most important features:
@@ -19,11 +18,11 @@ or update NodeJS (the 8.0 version is out, how long you will be use legacy builds
 ## Installation
 The simplest way, install via npm, type to console:
 
-`npm i modbus-rtu serialport --save`
+`npm i modbus-rtu-tcp --save`
 
 ## Benefits
 1. **Queue**. This is a killer-feature of this library. Behind the scene it use a simple queue.
-All request what you do stack to this queue and execute only if previous was finished.
+All request what you do stack to this queue and execute only if previous was finished or timeouted.
 It means that using this library you can write to modbus without waiting a response of previously command.
 That make you code much cleaner and decoupled. See examples below.
 
@@ -34,28 +33,32 @@ All communication functions return promises, so you can easily process data or c
 
 ### The basic example
 ```js
-const SerialPort = require('serialport');
-const ModbusMaster = require('modbus-rtu').ModbusMaster;
+import net from 'net';
+import Reconnect from 'node-net-reconnect';
+import { ModbusMaster } from './../src/';
 
-//create serail port with params. Refer to node-serialport for documentation
-const serialPort = new SerialPort("/dev/ttyUSB0", {
-   baudRate: 2400
+const socket = net.Socket();
+
+const options = {
+  host: '127.0.0.1',
+  port: 5008,
+  retryTime: 1000, // 1s for every retry
+  retryAlways: true, // retry even if the connection was closed on purpose
+};
+
+
+const recon = new Reconnect(socket, options);
+
+const modbusMaster = new ModbusMaster(socket, {
+  debug: true,
 });
+setInterval(() => {
+  modbusMaster.readHoldingRegisters(1, 107, 2);
+}, 1000);
 
-//create ModbusMaster instance and pass the serial port object
-const master = new ModbusMaster(serialPort);
+// Modbus starts automatically on "connect" event
+socket.connect(options);
 
-//Read from slave with address 1 four holding registers starting from 0.
-master.readHoldingRegisters(1, 0, 4).then((data) => {
-    //promise will be fulfilled with parsed data
-    console.log(data); //output will be [10, 100, 110, 50] (numbers just for example)
-}, (err) => {
-    //or will be rejected with error
-});
-
-//Write to first slave into second register value 150.
-//slave, register, value
-master.writeSingleRegister(1, 2, 150).then(success, error);
 ```
 
 ### Queueing
@@ -115,23 +118,16 @@ To deal with this problem all request instead of directly writing to port are pu
 
 ## API Documentation
 
-### new ModbusMaster(serialPort, [options])
+### new ModbusMaster(socket, [options])
 
 Constructor of modbus class.
 
-* **serialPort** - instance of serialPort object
+* **socket** - instance of net socket object
 * **options** - object with Modbus options
 
 **List of options:**
 * `responseTimeout`: default `500`
 * `debug`: default `false`; enable logging to console. 
-
-Example:
-```js
-new ModbusMaster(new SerialPort("/dev/ttyUSB0", {
-    baudRate: 9600
-}))
-```
 
 ### master.readHoldingRegisters
 ```ts
@@ -171,34 +167,6 @@ By default bytes treated as **signed integer**.
 
 **Returns Promise<T[]>** which will be fulfilled with array of data
 
-Example:
-```js
-const {ModbusMaster, DATA_TYPES} = require('modbus-rtu');
-
-const master = new ModbusMaster(serialPort);
-
-master.readHoldingRegisters(1, 0, 4).then((data) => {
-    //promise will be fulfilled with parsed data
-    console.log(data); //output will be [-10, 100, 110, 50] (numbers just for example)
-}, (err) => {
-    //or will be rejected with error
-    //for example timeout error or crc.
-});
-
-master.readHoldingRegisters(1, 0, 4, DATA_TYPES.UINT).then((data) => {
-    // data will be treat as unsigned integer
-    console.log(data); //output will be [20, 100, 110, 50] (numbers just for example)
-});
-
-master.readHoldingRegisters(1, 0, 2, (rawBuffer) => {
-    //buffer here contains only data without pdu header and crc
-    return rawBuffer.readUInt32BE(0);
-}).then((bigNumber) => {
-    //promise will be fullfilled with result of callback
-    console.log(bigNumber); //2923517522
-});
-```
-
 ### master.writeSingleRegister
 ```ts
 writeSingleRegister(slave: int, register: int, value: int, [retryCount=10]) -> Promise<void>
@@ -214,11 +182,6 @@ If fails will be repeated `retryCount` times.
 
 **Returns Promise**
 
-Example:
-```js
-const master = new ModbusMaster(serialPort);
-master.writeSingleRegister(1, 2, 150);
-```
 
 ### master.writeMultipleRegisters
 ```ts
@@ -235,13 +198,6 @@ You can set starting register and data array. Register from `start` to `array.le
 
 **Returns promise**
 
-Example:
-```js
-new ModbusMaster(serialPort, (master) => {
-  master.writeMultipleRegisters(1, 2, [150, 100, 20]);
-})
-```
-
 ## Testing
 To run test, type to console:
 
@@ -250,7 +206,3 @@ To run test, type to console:
 Or run manually entire test (by executing test file via node).
 
 Please feel free to create PR with you tests.
-
-
-## Roadmap
-1. Add rest modbus functions

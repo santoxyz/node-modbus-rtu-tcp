@@ -110,6 +110,9 @@ export class ModbusMaster {
      */
     createFixedPacket(slave, func, param, param2) {
         return (new BufferPut())
+            .word16be(1) //request
+            .word16be(0) //MODBUS protocol
+            .word16be(6) //number of following bytes
             .word8be(slave)
             .word8be(func)
             .word16be(param)
@@ -145,12 +148,6 @@ export class ModbusMaster {
      * @returns {Promise<Buffer>}
      */
     request(buffer) {
-        return this.serial.write(packetUtils.addCrc(buffer))
-            .then((response) => {
-                if (!packetUtils.checkCrc(response)) {
-                    throw new ModbusCrcError();
-                }
-                return response;
-            });
+        return this.socket.write(buffer));
     }
 }

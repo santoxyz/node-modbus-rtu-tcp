@@ -148,6 +148,6 @@ export class ModbusMaster {
      * @returns {Promise<Buffer>}
      */
     request(buffer) {
-        return this.socket.write(buffer));
+        return this.socket.write(buffer);
     }
 }

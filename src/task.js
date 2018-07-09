@@ -1,5 +1,5 @@
 import Promise from 'bluebird';
-
+var logger = require('./logger');
 const EXCEPTION_LENGTH = 5;
 const MIN_DATA_LENGTH = 6;
 const MAX_BUFFER_LENGTH = 259;
@@ -9,6 +9,10 @@ export class Task {
      * @param {Buffer} payload
      */
     constructor(payload) {
+        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : { debug: false };
+        this.options = options;
+        this.logger = new logger.Logger(options);
+        
         /**
          * @private
          */
@@ -65,7 +69,9 @@ export class Task {
         const expectedLength = this.length;
         let bufferLength = this.buffer.length;
 
-        if (expectedLength < MIN_DATA_LENGTH || bufferLength < EXCEPTION_LENGTH) { return; }
+        if (expectedLength < MIN_DATA_LENGTH || bufferLength < EXCEPTION_LENGTH) { 
+            this.logger.info('Response length not valid, expectedLength: ' + expectedLength + ' bufferLength: ' + bufferLength);
+            return; }
 
         if (bufferLength > MAX_BUFFER_LENGTH) {
             this.buffer = this.buffer.slice(-MAX_BUFFER_LENGTH);
@@ -78,10 +84,10 @@ export class Task {
             const unitId = this.buffer[i];
             const functionCode = this.buffer[i + 1];
 
-            if (unitId !== this.id) { continue; }
+            //if (unitId !== this.id) { continue; }
 
             if (functionCode === this.cmd && i + expectedLength <= bufferLength) {
-                return done(this.getMessage(i, expectedLength));
+                return done(this.getMessage(this.payload.length, expectedLength));
             }
             if (functionCode === (0x80 | this.cmd) && i + EXCEPTION_LENGTH <= bufferLength) {
                 return done(this.getMessage(i, EXCEPTION_LENGTH));
@@ -99,9 +105,12 @@ export class Task {
      * @returns {Buffer}
      */
     getMessage(start, length) {
+      if (this.buffer.length === this.payload.length + length) {
         const msg = this.buffer.slice(start, start + length);
         this.buffer = this.buffer.slice(start + length);
         return msg;
+      }
+      return this.buffer;
     }
 
     /**

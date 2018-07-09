@@ -2,7 +2,7 @@ import Promise from 'bluebird';
 
 const EXCEPTION_LENGTH = 5;
 const MIN_DATA_LENGTH = 6;
-const MAX_BUFFER_LENGTH = 256;
+const MAX_BUFFER_LENGTH = 259;
 
 export class Task {
     /**

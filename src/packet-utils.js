@@ -12,7 +12,7 @@ export const DATA_TYPES = {
  * @param {Buffer} buffer
  */
 export function getDataBuffer(buffer) {
-    return buffer.slice(9, buffer.length - 2);
+    return buffer.slice(9, buffer.length);
 }
 
 /**

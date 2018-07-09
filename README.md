@@ -206,3 +206,8 @@ To run test, type to console:
 Or run manually entire test (by executing test file via node).
 
 Please feel free to create PR with you tests.
+
+
+## Deploy
+
+babel src --out-dir lib

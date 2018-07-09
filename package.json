@@ -1,5 +1,5 @@
 {
-  "name": "modbus-rtu-tcp-santox",
+  "name": "modbus-rtu-tcp-santoxyz",
   "version": "0.2.5",
   "scripts": {
     "build": "rimraf lib && babel src --out-dir lib",
@@ -10,7 +10,7 @@
   },
   "description": "modbus-rtu via TCP socket for node.js",
   "keywords": [
-    "modbus-rtu-tcp-santox",
+    "modbus-rtu-tcp-santoxyz",
     "modbus",
     "modbus master"
   ],

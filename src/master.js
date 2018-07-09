@@ -1,6 +1,6 @@
 import BufferPut from 'bufferput';
 import Promise from 'bluebird';
-import { SerialHelperFactory } from './serial-helper';
+import { SocketHelperFactory } from './socket-helper';
 import { Logger } from './logger';
 
 import {
@@ -14,8 +14,8 @@ import { ModbusRetryLimitExceed, ModbusCrcError } from './errors';
 import * as packetUtils from './packet-utils';
 
 export class ModbusMaster {
-    constructor(serialPort, options) {
-        serialPort.on('error', (err) => {
+    constructor(socket, options) {
+        socket.on('error', (err) => {
             console.error(err);
         });
 
@@ -25,7 +25,7 @@ export class ModbusMaster {
         }, options || {});
 
         this.logger = new Logger(this._options);
-        this.serial = SerialHelperFactory.create(serialPort, this._options);
+        this.socket = SocketHelperFactory.create(socket, this._options);
     }
 
     /**

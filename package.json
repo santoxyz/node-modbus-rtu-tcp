@@ -1,6 +1,6 @@
 {
-  "name": "modbus-rtu",
-  "version": "0.2.1",
+  "name": "modbus-rtu-tcp",
+  "version": "0.2.4",
   "scripts": {
     "build": "rimraf lib && babel src --out-dir lib",
     "lint": "eslint .",
@@ -8,24 +8,24 @@
     "ci": "npm run lint && npm run test",
     "prepublishOnly": "npm run build"
   },
-  "description": "modbus-rtu implementation for node.js",
+  "description": "modbus-rtu via TCP socket for node.js",
   "keywords": [
-    "modbus-rtu",
+    "modbus-rtu-tcp",
     "modbus",
     "modbus master"
   ],
   "main": "lib/index.js",
-  "homepage": "https://github.com/thekip/node-modbus-rtu",
+  "homepage": "https://github.com/santoxyz/node-modbus-rtu-tcp",
   "repository": {
     "type": "git",
-    "url": "git@github.com:thekip/node-modbus-rtu.git"
+    "url": "git@github.com:santoxyz/node-modbus-rtu-tcp.git"
   },
   "author": {
-    "name": "Tim Yatsenko",
-    "url": "https://github.com/thekip"
+    "name": "Santoxyz",
+    "url": "https://github.com/santoxyz"
   },
   "bugs": {
-    "url": "ttps://github.com/thekip/node-modbus-rtu/issues"
+    "url": "ttps://github.com/santoxyz/node-modbus-rtu/issues"
   },
   "engines": {
     "node": ">=5"
@@ -34,20 +34,50 @@
     "bluebird": "^3.3.0",
     "bufferput": "0.1.x",
     "crc": "3.3.0",
-    "lodash": "^4.3.0"
-  },
-  "peerDependencies": {
-    "serialport": ">=2"
+    "debug": "~2.6.3",
+    "node-net-reconnect": "^0.2.1",
+    "promise-socket": "^3.0.2"
   },
   "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-preset-env": "^1.6.0",
-    "babel-register": "^6.24.1",
-    "cross-env": "^2.0.0",
-    "eslint": "^4.3.0",
-    "rimraf": "^2.6.1",
-    "sinon": "^1.17.5",
-    "tap-spec": "^4.1.1",
-    "tape": "^4.7.0"
+    "babel-cli": "~6.26.0",
+    "babel-core": "~6.26.0",
+    "babel-eslint": "~8.0.2",
+    "babel-jest": "^21.2.0",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-dynamic-import-node": "^1.2.0",
+    "babel-plugin-import": "^1.1.1",
+    "babel-plugin-transform-async-to-bluebird": "^1.1.1",
+    "babel-plugin-transform-async-to-generator": "~6.24.1",
+    "babel-plugin-transform-async-to-module-method": "^6.24.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "~6.26.0",
+    "babel-plugin-transform-flow-strip-types": "~6.22.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-airbnb": "^2.4.0",
+    "babel-preset-async-to-bluebird": "^1.1.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-es2015-mod": "^6.6.0",
+    "babel-preset-es2015-node4": "^2.1.1",
+    "babel-preset-es3": "^1.0.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-preset-stage-3": "~6.24.1",
+    "babel-runtime": "~6.26.0",
+    "babel-watch": "^2.0.7",
+    "eslint": "^4.18.2",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-config-airbnb-base": "~12.1.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-import-resolver-node": "^0.3.2",
+    "eslint-loader": "^2.0.0",
+    "eslint-plugin-css-modules": "^2.7.5",
+    "eslint-plugin-flowtype": "^2.46.1",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-prettier": "^2.6.0",
+    "eslint-plugin-react": "^7.7.0",
+    "flow-bin": "~0.58.0",
+    "jest": "~21.2.1",
+    "nodemon": "^1.12.0"
   }
 }

@@ -35,7 +35,7 @@
     "bufferput": "0.1.x",
     "crc": "3.3.0",
     "debug": "~2.6.3",
-    "node-net-reconnect": "^0.2.1",
+    "node-net-reconnect": "git+https://github.com/santoxyz/node-net-reconnect.git",
     "promise-socket": "^3.0.2"
   },
   "devDependencies": {

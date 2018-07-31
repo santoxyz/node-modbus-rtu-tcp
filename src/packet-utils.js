@@ -24,7 +24,7 @@ export function getDataBuffer(buffer) {
 export function parseFc03Packet(buffer, dataType) {
     const results = [];
 
-    for (let i = 0; i < buffer.length; i += 2) {
+    for (let i = 0; i <= buffer.length -2; i += 2) {
         results.push(readDataFromBuffer(buffer, i, dataType));
     }
 

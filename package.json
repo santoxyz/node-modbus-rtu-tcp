@@ -1,6 +1,6 @@
 {
   "name": "modbus-rtu-tcp-santoxyz",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "scripts": {
     "build": "rimraf lib && babel src --out-dir lib",
     "lint": "eslint .",
